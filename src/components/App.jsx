@@ -1,14 +1,19 @@
 import { GlobalStyles } from "utils/GlobalStyle";
 // import movies from '../data/movies.json';
 import { moviesMapper } from "../utils/mapper";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { MoviesGallery } from "./MoviesGallery/MoviesGallery";
 import { Modal } from "./Modal/Modal";
 import { Button } from "./Button/Button";
 import { Loader } from "./Loader/Loader";
 import { Notification } from "./Notification/Notitfication";
+import { AuthNav } from "./AuthNav/AuthNav";
+import { TestForm } from "./TestForm/TestForm";
+
 import { getMovies } from "../servises/moviesApi";
+
+import { AuthContext } from "../context/context";
 
 export const App = () => {
   const [isShown, setIsShown] = useState(false);
@@ -17,6 +22,8 @@ export const App = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const { isAuth } = useContext(AuthContext);
 
   useEffect(() => {
     if (isShown) {
@@ -54,27 +61,35 @@ export const App = () => {
 
   return (
     <>
-      <Button
-        text={isShown ? "Hide movies" : "Show movies"}
-        clickHandler={showFilms}
-      />
-      {isShown && (
+      <AuthNav />
+      {!isAuth ? (
+        <Notification text="Login, please" />
+      ) : (
         <>
-          <MoviesGallery
-            movies={movies}
-            deleteMovie={deleteMovie}
-            openModal={openModal}
+          <Button
+            text={isShown ? "Hide movies" : "Show movies"}
+            clickHandler={showFilms}
           />
-          {!isLoading && !error && (
-            <Button text="Load more" clickHandler={loadMore} />
+          {isShown && (
+            <>
+              <MoviesGallery
+                movies={movies}
+                deleteMovie={deleteMovie}
+                openModal={openModal}
+              />
+              {!isLoading && !error && (
+                <Button text="Load more" clickHandler={loadMore} />
+              )}
+            </>
+          )}
+          {isLoading && <Loader />}
+          {error && <Notification text={error} />}
+          {currentImage && (
+            <Modal currentImage={currentImage} closeModal={closeModal} />
           )}
         </>
       )}
-      {isLoading && <Loader />}
-      {error && <Notification text={error} />}
-      {currentImage && (
-        <Modal currentImage={currentImage} closeModal={closeModal} />
-      )}
+      <TestForm />
       <GlobalStyles />
     </>
   );
