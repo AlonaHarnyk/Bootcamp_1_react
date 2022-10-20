@@ -21,3 +21,14 @@ export async function fetchEventById(id) {
   });
   return response.data;
 }
+
+export async function fetchEventByName(keyword) {
+  const response = await axios(`events`, {
+    params: {
+      apikey: KEY,
+      size: 20,
+      keyword,
+    },
+  });
+  return response.data._embedded.events;
+}

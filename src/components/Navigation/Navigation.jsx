@@ -10,6 +10,9 @@ export const Navigation = () => {
         <li>
           <A to='events'>Events</A>
         </li>
+                <li>
+          <A to='search'>Search events</A>
+        </li>
       </ul>
     </nav>
   );

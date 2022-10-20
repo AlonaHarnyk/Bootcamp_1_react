@@ -1,5 +1,5 @@
 import { useFetchEvent } from "hooks/useFetchEvent";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link, Outlet } from "react-router-dom";
 
 export const EventDetailsPage = () => {
   const event = useFetchEvent();
@@ -12,7 +12,7 @@ export const EventDetailsPage = () => {
         <>
           <button
             onClick={() => {
-              navigate(location?.state?.from ?? '/');
+              navigate(location?.state?.from ?? "/");
             }}
           >
             Go back
@@ -21,6 +21,12 @@ export const EventDetailsPage = () => {
           <img src={event.images[0].url} alt={event.name} width="300" />
           <p>Main genre: {event.classifications[0].genre.name}</p>
           <p>Main subgenre: {event.classifications[0].subGenre.name}</p>
+          {location.pathname.includes("search") && (
+            <Link to="test" state={location.state}>
+              To test
+            </Link>
+          )}
+          <Outlet />
         </>
       )}
     </>
