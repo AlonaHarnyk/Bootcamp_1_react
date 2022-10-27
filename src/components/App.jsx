@@ -1,18 +1,44 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { Layout } from "./Layout/Layout";
-import { HomePage } from "pages/HomePage/HomePage";
-import { AddContactPage } from "pages/AddContactPage/AddContactPage";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "redux/users/users-operations";
+import { selectIsLoading } from "redux/users/users-selectors";
+
+import { Button } from "./Button/Button";
+import { UsersList } from "./UsersList/UsersList";
+import { AddForm } from "./AddForm/AddForm";
 
 export const App = () => {
+  const [isListShown, setIsListShown] = useState(false);
+  const [isFormShown, setIsFormShown] = useState(false);
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector(selectIsLoading)
+
+  const changeVisibility = () => {
+    setIsListShown(true);
+    dispatch(fetchUsers());
+  };
+
+  const showForm = () => {
+    setIsFormShown(true);
+  };
+
+  const closeForm = () => {
+    setIsFormShown(false)
+  }
+
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="add" element={<AddContactPage />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      {isListShown ? (
+        <>
+          {isLoading && <h1>LOADING...</h1>}
+          <UsersList />
+          {!isLoading &&<Button text="Add user" clickHandler={showForm} />}
+          {isFormShown && <AddForm closeForm={closeForm} />}
+        </>
+      ) : (
+        <Button text="Show list of users" clickHandler={changeVisibility} />
+      )}
     </>
   );
 };
