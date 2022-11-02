@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: { name: "", email: "" },
   token: null,
-  isLoggedIn: false,
+  // isLoggedIn: false,
   isLoading: false,
   error: null,
   isFetchingCurrentUser: false,
@@ -21,7 +21,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.token = token;
       state.user = user;
-      state.isLoggedIn = true;
+      // state.isLoggedIn = true;
     },
     [register.rejected]: (state, { payload }) => {
       state.isLoading = false;
@@ -35,7 +35,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.token = token;
       state.user = user;
-      state.isLoggedIn = true;
+      // state.isLoggedIn = true;
     },
     [login.rejected]: (state, { payload }) => {
       state.isLoading = false;
@@ -48,7 +48,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.user = { name: "", email: "" };
       state.token = null;
-      state.isLoggedIn = false;
+      // state.isLoggedIn = false;
     },
     [logout.rejected]: (state, { payload }) => {
       state.isLoading = false;
@@ -61,7 +61,7 @@ const authSlice = createSlice({
     [fetchCurrentUser.fulfilled]: (state, { payload }) => {
       state.isLoading = false;
       state.user = payload;
-      state.isLoggedIn = true;
+      // state.isLoggedIn = true;
       state.isFetchingCurrentUser = false;
     },
     [fetchCurrentUser.rejected]: (state, { payload }) => {

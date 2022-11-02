@@ -1,59 +1,64 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers } from "redux/users/users-operations";
-import { selectIsLoading, selectError } from "redux/users/users-selectors";
-
-import { Button } from "./Button/Button";
-import { UsersList } from "./UsersList/UsersList";
-import { AddForm } from "./AddForm/AddForm";
-
-import { RegisterForm } from "./RegisterForm/RegisterForm";
-import { LoginForm } from "./LoginForm/LoginForm";
-
-import { logout, fetchCurrentUser } from "../redux/auth/auth-operations";
+import { Routes, Route } from "react-router-dom";
+import { HomePage } from "pages/HomePage/HomePage";
+import { UsersPage } from "pages/UsersPage/UsersPage";
+import { LoginPage } from "pages/LoginPage/LoginPage";
+import { RegisterPage } from "pages/RegisterPage/RegisterForm";
+import { Layout } from "./Layout/Layout";
+import { PrivateRoute } from "HOCs/PrivateRoute";
+import { PublicRoute } from "HOCs/PublicRoute";
+import { fetchCurrentUser } from "redux/auth/auth-operations";
+import { selectIsFetchingCurrentUser } from "redux/auth/auth-selectors";
 
 export const App = () => {
-  const [isListShown, setIsListShown] = useState(false);
-  const [isFormShown, setIsFormShown] = useState(false);
   const dispatch = useDispatch();
-
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
+  const isFetchingCurrentUser = useSelector(selectIsFetchingCurrentUser);
 
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
-  const changeVisibility = () => {
-    setIsListShown(true);
-    dispatch(fetchUsers());
-  };
-
-  const showForm = () => {
-    setIsFormShown(true);
-  };
-
-  const closeForm = () => {
-    setIsFormShown(false);
-  };
-
   return (
     <>
-      <RegisterForm />
-      <LoginForm />
-      <button onClick={() => dispatch(logout())}>Logout</button>
-
-      {isListShown ? (
-        <>
-          {isLoading && <h1>LOADING...</h1>}
-          <UsersList />
-          {!isLoading && <Button text="Add user" clickHandler={showForm} />}
-          {isFormShown && <AddForm closeForm={closeForm} />}
-        </>
-      ) : (
-        <Button text="Show list of users" clickHandler={changeVisibility} />
+      {!isFetchingCurrentUser && (
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route
+              index
+              element={
+                <PublicRoute>
+                  <HomePage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="users"
+              element={
+                <PrivateRoute>
+                  <UsersPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="register"
+              element={
+                <PublicRoute restricted>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="login"
+              element={
+                <PublicRoute restricted>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+          </Route>
+        </Routes>
       )}
-      {error && <p>{error.message}</p>}
     </>
   );
 };
