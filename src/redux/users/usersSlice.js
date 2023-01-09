@@ -75,6 +75,7 @@ const userSlice = createSlice({
         isAnyOf(fetchUsers.rejected, deleteUser.rejected, addUser.rejected),
         (state, { payload }) => {
           state.error = payload;
+          state.isLoading = false;
         }
       ),
 });
